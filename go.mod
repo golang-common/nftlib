@@ -1,4 +1,4 @@
-module nftlib
+module github.com/lyonsdpy/nftlib
 
 go 1.16
 
