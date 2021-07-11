@@ -49,6 +49,27 @@ func (d *Chain) AddRule(rule *Rule) error {
 	return nil
 }
 
+func (d *Chain) DelRule(rule *Rule) error {
+	nrule, err := rule.toNRule()
+	if err != nil {
+		return err
+	}
+	err = d.conn.DelRule(nrule)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *Chain) ReplaceRule(rule *Rule) error {
+	nrule, err := rule.toNRule()
+	if err != nil {
+		return err
+	}
+	d.conn.ReplaceRule(nrule)
+	return nil
+}
+
 func (d *Chain) ListRule() ([]*Rule, error) {
 	var r []*Rule
 	nrlist, err := d.conn.GetRule(d.Table.toNTable(), d.toNch())
