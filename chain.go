@@ -3,7 +3,6 @@
 package nftlib
 
 import (
-	"errors"
 	"github.com/google/nftables"
 	"github.com/google/nftables/binaryutil"
 )
@@ -22,12 +21,13 @@ const (
 )
 
 type Chain struct {
-	conn   *Conn       `json:"-"`
-	Table  *Table      `json:"table,omitempty"`
-	Name   string      `json:"name,omitempty"`
-	Hook   chainHook   `json:"hook,omitempty"`
-	Type   chainType   `json:"type,omitempty"`
-	Policy chainPolicy `json:"policy,omitempty"`
+	conn     *Conn       `json:"-"`
+	Table    *Table      `json:"table,omitempty"`
+	Name     string      `json:"name,omitempty"`
+	Priority int32       `json:"priority"`
+	Hook     chainHook   `json:"hook,omitempty"`
+	Type     chainType   `json:"type,omitempty"`
+	Policy   chainPolicy `json:"policy,omitempty"`
 }
 
 type (
@@ -91,7 +91,7 @@ func (d *Chain) Commit() error {
 	return d.conn.Commit()
 }
 
-func (d *Chain) toCh(nch nftables.Chain) error {
+func (d *Chain) toCh(nch nftables.Chain) {
 	d.Name = nch.Name
 	switch nch.Type {
 	case nftables.ChainTypeFilter:
@@ -100,8 +100,6 @@ func (d *Chain) toCh(nch nftables.Chain) error {
 		d.Type = ChainTypeRoute
 	case nftables.ChainTypeNAT:
 		d.Type = ChainTypeNat
-	default:
-		return errors.New("to chain failed, empty chain type")
 	}
 
 	switch nch.Hooknum {
@@ -111,8 +109,6 @@ func (d *Chain) toCh(nch nftables.Chain) error {
 		d.Hook = ChainHookOutput
 	case nftables.ChainHookForward:
 		d.Hook = ChainHookForward
-	default:
-		return errors.New("to chain failed, empty chain hook")
 	}
 
 	plc := *nch.Policy
@@ -123,10 +119,7 @@ func (d *Chain) toCh(nch nftables.Chain) error {
 		d.Policy = ChainPolicyAccept
 	case nftables.ChainPolicyDrop:
 		d.Policy = ChainPolicyDrop
-	default:
-		return errors.New("to chain failed, empty chain policy")
 	}
-	return nil
 }
 
 func (d *Chain) toNch() *nftables.Chain {

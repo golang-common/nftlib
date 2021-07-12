@@ -108,10 +108,7 @@ func (d *Table) GetChainByName(name string) (*Chain, error) {
 	for _, nc := range nch {
 		if nc.Name == name && nc.Table.Name == d.Name {
 			ch := &Chain{conn: d.conn, Table: d}
-			err = ch.toCh(*nc)
-			if err != nil {
-				return nil, err
-			}
+			ch.toCh(*nc)
 			return ch, nil
 		}
 	}
@@ -127,17 +124,14 @@ func (d *Table) ListChain() ([]*Chain, error) {
 	for _, nch := range nchs {
 		if nch.Table.Name == d.Name {
 			ch := &Chain{Table: d, conn: d.conn}
-			err = ch.toCh(*nch)
-			if err != nil {
-				return nil, err
-			}
+			ch.toCh(*nch)
 			chs = append(chs, ch)
 		}
 	}
 	return chs, nil
 }
 
-func (d *Table) AddChain(name string, tp chainType, hook chainHook, plc chainPolicy) (*Chain, error) {
+func (d *Table) AddBaseChain(name string, tp chainType, hook chainHook, plc chainPolicy, pri ...int32) (*Chain, error) {
 	n, err := d.GetChainByName(name)
 	if err == nil && n != nil {
 		return nil, errors.New("named chain already exist")
@@ -149,6 +143,9 @@ func (d *Table) AddChain(name string, tp chainType, hook chainHook, plc chainPol
 		Type:   tp,
 		Hook:   hook,
 		Policy: plc,
+	}
+	if len(pri) > 0 {
+		ch.Priority = pri[0]
 	}
 	nch := ch.toNch()
 	d.conn.AddChain(nch)
