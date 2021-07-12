@@ -111,14 +111,16 @@ func (d *Chain) toCh(nch nftables.Chain) {
 		d.Hook = ChainHookForward
 	}
 
-	plc := *nch.Policy
-	plcb := binaryutil.BigEndian.PutUint32(uint32(plc))
-	plcn := binaryutil.NativeEndian.Uint32(plcb)
-	switch nftables.ChainPolicy(plcn) {
-	case nftables.ChainPolicyAccept:
-		d.Policy = ChainPolicyAccept
-	case nftables.ChainPolicyDrop:
-		d.Policy = ChainPolicyDrop
+	if nch.Policy != nil {
+		plc := *nch.Policy
+		plcb := binaryutil.BigEndian.PutUint32(uint32(plc))
+		plcn := binaryutil.NativeEndian.Uint32(plcb)
+		switch nftables.ChainPolicy(plcn) {
+		case nftables.ChainPolicyAccept:
+			d.Policy = ChainPolicyAccept
+		case nftables.ChainPolicyDrop:
+			d.Policy = ChainPolicyDrop
+		}
 	}
 }
 

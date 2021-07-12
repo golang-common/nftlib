@@ -156,6 +156,25 @@ func (d *Table) AddBaseChain(name string, tp chainType, hook chainHook, plc chai
 	return ch, nil
 }
 
+func (d *Table) AddRegularChain(name string) (*Chain, error) {
+	n, err := d.GetChainByName(name)
+	if err == nil && n != nil {
+		return nil, errors.New("named chain already exist")
+	}
+	ch := &Chain{
+		conn:  d.conn,
+		Table: d,
+		Name:  name,
+	}
+	nch := ch.toNch()
+	d.conn.AddChain(nch)
+	err = d.conn.Commit()
+	if err != nil {
+		return nil, err
+	}
+	return ch, nil
+}
+
 func (d *Table) toTable(nTable nftables.Table) error {
 	switch nTable.Family {
 	case nftables.TableFamilyINet:

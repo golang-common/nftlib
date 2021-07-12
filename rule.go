@@ -565,9 +565,9 @@ func (d *Rule) toNRule() (*nftables.Rule, error) {
 		case RuleActDrop:
 			ntr.Exprs = append(ntr.Exprs, &expr.Verdict{Kind: expr.VerdictDrop})
 		case RuleActGoto:
-			ntr.Exprs = append(ntr.Exprs, &expr.Verdict{Kind: expr.VerdictGoto})
+			ntr.Exprs = append(ntr.Exprs, &expr.Verdict{Kind: expr.VerdictGoto, Chain: d.DstChain})
 		case RuleActJump:
-			ntr.Exprs = append(ntr.Exprs, &expr.Verdict{Kind: expr.VerdictJump})
+			ntr.Exprs = append(ntr.Exprs, &expr.Verdict{Kind: expr.VerdictJump, Chain: d.DstChain})
 		}
 	}
 	return ntr, nil
