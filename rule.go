@@ -463,6 +463,9 @@ func (d *Rule) toNRule() (*nftables.Rule, error) {
 	var ntr = new(nftables.Rule)
 	ntr.Table = d.Chain.Table.toNTable()
 	ntr.Chain = d.Chain.toNch()
+	if d.Index != 0 {
+		ntr.Position = d.Index
+	}
 	// 解析L3协议
 	if d.L3Proto != "" {
 		switch d.L3Proto {

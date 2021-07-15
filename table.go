@@ -79,6 +79,15 @@ func (d *Table) GetSetByName(name string) (*Set, error) {
 	return set, nil
 }
 
+func (d *Table) DelSet(set *Set) error {
+	nset, _, err := set.toNSet()
+	if err != nil {
+		return err
+	}
+	d.conn.DelSet(nset)
+	return nil
+}
+
 func (d *Table) ListSet() ([]*Set, error) {
 	var setList []*Set
 	nsets, err := d.conn.GetSets(d.toNTable())
@@ -98,6 +107,23 @@ func (d *Table) ListSet() ([]*Set, error) {
 		setList = append(setList, set)
 	}
 	return setList, nil
+}
+
+// ClearSet 清除所有没被使用的集合
+func (d *Table) ClearSet() error {
+	sets, err := d.ListSet()
+	if err != nil {
+		return err
+	}
+	for _, set := range sets {
+		nset, _, err := set.toNSet()
+		if err != nil {
+			return err
+		}
+		d.conn.DelSet(nset)
+		_ = d.conn.Commit()
+	}
+	return nil
 }
 
 func (d *Table) GetChainByName(name string) (*Chain, error) {
@@ -131,29 +157,20 @@ func (d *Table) ListChain() ([]*Chain, error) {
 	return chs, nil
 }
 
-func (d *Table) AddBaseChain(name string, tp chainType, hook chainHook, plc chainPolicy, pri ...int32) (*Chain, error) {
-	n, err := d.GetChainByName(name)
+func (d *Table) AddBaseChain(chain *Chain) error {
+	n, err := d.GetChainByName(chain.Name)
 	if err == nil && n != nil {
-		return nil, errors.New("named chain already exist")
+		return errors.New("named chain already exist")
 	}
-	ch := &Chain{
-		conn:   d.conn,
-		Table:  d,
-		Name:   name,
-		Type:   tp,
-		Hook:   hook,
-		Policy: plc,
-	}
-	if len(pri) > 0 {
-		ch.Priority = pri[0]
-	}
-	nch := ch.toNch()
+	chain.conn = d.conn
+	chain.Table = d
+	nch := chain.toNch()
 	d.conn.AddChain(nch)
 	err = d.conn.Commit()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return ch, nil
+	return nil
 }
 
 func (d *Table) AddRegularChain(name string) (*Chain, error) {

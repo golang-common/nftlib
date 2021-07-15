@@ -16,7 +16,12 @@ func TestAddChain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = tbl.AddChain("mychain", ChainTypeFilter, ChainHookInput, ChainPolicyAccept)
+	err = tbl.AddBaseChain(&Chain{
+		Name:   "mychain",
+		Hook:   ChainHookInput,
+		Type:   ChainTypeFilter,
+		Policy: ChainPolicyAccept,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -266,5 +271,5 @@ func TestListRule(t *testing.T) {
 }
 
 func TestTemp(t *testing.T) {
-	t.Log(6&1)
+	t.Log(6 & 1)
 }

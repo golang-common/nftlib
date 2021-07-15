@@ -40,6 +40,19 @@ func (d *Chain) NewRule() *Rule {
 	return &Rule{Chain: d, conn: d.conn}
 }
 
+func (d *Chain) InsertRule(rule *Rule) error {
+	nrule, err := rule.toNRule()
+	if err != nil {
+		return err
+	}
+	d.conn.InsertRule(nrule)
+	return nil
+}
+
+func (d *Chain) ClearRule() {
+	d.conn.FlushChain(d.toNch())
+}
+
 func (d *Chain) AddRule(rule *Rule) error {
 	nrule, err := rule.toNRule()
 	if err != nil {

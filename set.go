@@ -67,6 +67,15 @@ func (d *Set) Commit() error {
 	return d.conn.Commit()
 }
 
+func (d *Set) Flush() error {
+	ns, _, err := d.toNSet()
+	if err != nil {
+		return err
+	}
+	d.conn.FlushSet(ns)
+	return nil
+}
+
 func (d *Set) toSet(set nftables.Set, elems ...nftables.SetElement) error {
 	d.Name = set.Name
 	for k, v := range dtypeList {

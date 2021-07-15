@@ -38,11 +38,17 @@ func (d *NftTest) Test01_AddTable() {
 }
 
 func (d *NftTest) Test02_AddChain() {
-	chain, err := d.table.AddBaseChain("mychain", ChainTypeFilter, ChainHookInput, ChainPolicyAccept)
+	ch := &Chain{
+		Name:     "mychain",
+		Hook:     ChainHookInput,
+		Type:     ChainTypeFilter,
+		Policy:   ChainPolicyAccept,
+	}
+	err := d.table.AddBaseChain(ch)
 	if err != nil {
 		panic(err)
 	}
-	d.chain = chain
+	d.chain = ch
 	fmt.Println("创建mychain链成功")
 }
 
