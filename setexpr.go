@@ -86,7 +86,7 @@ func setElemIpRange(nelems []nftables.SetElement) []string {
 	if len(nelems) < 2 {
 		return nil
 	}
-	for i := len(nelems) - 1; i > 0; i -= 2 {
+	for i := len(nelems) - 2; i >= 0; i -= 2 {
 		if !(nelems[i].IntervalEnd == false && nelems[i-1].IntervalEnd == true) {
 			return nil
 		}

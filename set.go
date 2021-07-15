@@ -81,6 +81,7 @@ func (d *Set) toSet(set nftables.Set, elems ...nftables.SetElement) error {
 	for k, v := range dtypeList {
 		if set.KeyType.GetNFTMagic() == v.GetNFTMagic() && set.KeyType.GetNFTMagic() != 0 {
 			d.DType = k
+			break
 		}
 	}
 	d.ElemRange = set.Interval

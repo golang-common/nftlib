@@ -161,10 +161,6 @@ func (d *Table) AddBaseChain(chain *Chain) *Chain {
 }
 
 func (d *Table) AddRegularChain(name string) (*Chain, error) {
-	n, err := d.GetChainByName(name)
-	if err == nil && n != nil {
-		return nil, errors.New("named chain already exist")
-	}
 	ch := &Chain{
 		conn:  d.conn,
 		Table: d,
@@ -173,6 +169,10 @@ func (d *Table) AddRegularChain(name string) (*Chain, error) {
 	nch := ch.toNch()
 	d.conn.AddChain(nch)
 	return ch, nil
+}
+
+func (d *Table) Commit() error {
+	return d.conn.Commit()
 }
 
 func (d *Table) toTable(nTable nftables.Table) error {

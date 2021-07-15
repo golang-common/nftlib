@@ -56,6 +56,8 @@ func (d *Chain) AddRule(rule *Rule, handle ...uint64) error {
 }
 
 func (d *Chain) InsertRule(rule *Rule, handle ...uint64) error {
+	rule.conn = d.conn
+	rule.Chain = d
 	nrule, err := rule.toNRule(handle...)
 	if err != nil {
 		return err
@@ -65,6 +67,8 @@ func (d *Chain) InsertRule(rule *Rule, handle ...uint64) error {
 }
 
 func (d *Chain) DelRule(rule *Rule) error {
+	rule.conn = d.conn
+	rule.Chain = d
 	nrule, err := rule.toNRule()
 	if err != nil {
 		return err
