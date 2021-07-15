@@ -31,23 +31,11 @@ type Conn struct {
 	*nftables.Conn
 }
 
-func (d *Conn) ADDTable(name string, family tableFamily) (*Table, error) {
-	t, err := d.GetTableByName(name)
-	if err == nil && t != nil {
-		return nil, errors.New("named table already exist")
-	}
-	tbl := &Table{
-		conn:   d,
-		Name:   name,
-		Family: family,
-	}
-	ntbl := tbl.toNTable()
+func (d *Conn) ADDTable(table *Table) *Table {
+	table.conn = d
+	ntbl := table.toNTable()
 	d.AddTable(ntbl)
-	err = d.Commit()
-	if err != nil {
-		return nil, err
-	}
-	return tbl, nil
+	return table
 }
 
 func (d *Conn) ShowTables() ([]*Table, error) {

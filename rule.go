@@ -71,8 +71,7 @@ var (
 
 type Rule struct {
 	conn   *Conn  `json:"-"`
-	Chain  *Chain `json:"chain,omitempty"`
-	Index  uint64 `json:"index,omitempty"`
+	Chain  *Chain `json:"-"`
 	Handle uint64 `json:"handle,omitempty"`
 	// L3Proto ipv4 or ipv6
 	L3Proto string `json:"l3proto,omitempty"`
@@ -230,7 +229,6 @@ func (d *Rule) toRule(nrule nftables.Rule) error {
 		curRangeIpMin, curRangeIpMax     net.IP
 		curRangePortMin, curRangePortMax uint16
 	)
-	d.Index = nrule.Position
 	d.Handle = nrule.Handle
 	for i := 0; i < len(nrule.Exprs); i++ {
 		exp := nrule.Exprs[i]
@@ -459,12 +457,15 @@ func (d *Rule) toRule(nrule nftables.Rule) error {
 	return nil
 }
 
-func (d *Rule) toNRule() (*nftables.Rule, error) {
+func (d *Rule) toNRule(position ...uint64) (*nftables.Rule, error) {
 	var ntr = new(nftables.Rule)
 	ntr.Table = d.Chain.Table.toNTable()
 	ntr.Chain = d.Chain.toNch()
-	if d.Index != 0 {
-		ntr.Position = d.Index
+	if len(position) > 0 && position[0] > 0 {
+		ntr.Position = position[0]
+	}
+	if d.Handle != 0 {
+		ntr.Handle = d.Handle
 	}
 	// 解析L3协议
 	if d.L3Proto != "" {

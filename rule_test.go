@@ -3,11 +3,11 @@
 package nftlib
 
 import (
-	"net"
+	"fmt"
 	"testing"
 )
 
-func TestAddChain(t *testing.T) {
+func TestRuleList(t *testing.T) {
 	conn, err := New()
 	if err != nil {
 		t.Fatal(err)
@@ -16,260 +16,134 @@ func TestAddChain(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = tbl.AddBaseChain(&Chain{
-		Name:   "mychain",
-		Hook:   ChainHookInput,
-		Type:   ChainTypeFilter,
-		Policy: ChainPolicyAccept,
-	})
+	ch, err := tbl.GetChainByName("mychain")
 	if err != nil {
 		t.Fatal(err)
 	}
-}
-
-func TestAddRuleIpv4(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL3Proto(RuleL3Ip6)
-	rule.SetL3Ip(net.ParseIP("192.168.1.1"), RuleDireDst)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRuleIpv4Set(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL3Proto(RuleL3Ip)
-	rule.SetL3IpSet("setipv4", RuleDireDst)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRuleIpv6Set(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL3Proto(RuleL3Ip6)
-	rule.SetL3IpSet("setipv6", RuleDireDst)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRuleIpv4RangeSet(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL3Proto(RuleL3Ip6)
-	rule.SetL3IpSet("setipv4range", RuleDireSrc)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRuleIpv6RangeSet(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL3Proto(RuleL3Ip6)
-	rule.SetL3IpSet("setipv6range", RuleDireDst)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRulePort(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL4Proto(RuleL4Tcp)
-	rule.SetL4Set("setport", RuleDireSrc)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRulePortRange(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetL4Proto(RuleL4Tcp)
-	rule.SetL4Set("setportrange", RuleDireDst)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestAddRuleCtState(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rule := chain.NewRule()
-	rule.SetCt(RuleCtEstablished, RuleCtRelated)
-	rule.SetAccept()
-
-	err = chain.AddRule(rule)
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = chain.Commit()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestListRule(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	tbl, err := conn.GetTableByName("mytable")
-	if err != nil {
-		t.Fatal(err)
-	}
-	chain, err := tbl.GetChainByName("mychain")
-	if err != nil {
-		t.Fatal(err)
-	}
-	rules, err := chain.ListRule()
+	rules, err := ch.ListRule()
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(IndentJson(rules))
 }
 
-func TestTemp(t *testing.T) {
-	t.Log(6 & 1)
+func TestRule_Regular(t *testing.T) {
+	conn, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	conn.FlushRuleset()
+	tbl := conn.ADDTable(&Table{Name: "mytable", Family: TableFamilyInet})
+	ch := tbl.AddBaseChain(&Chain{
+		Name:   "mychain",
+		Hook:   ChainHookInput,
+		Type:   ChainTypeFilter,
+		Policy: ChainPolicyDrop,
+	})
+	err = ch.AddRule(&Rule{
+		L3Proto: RuleL3Ip,
+		L3DstIP: "1.1.1.1",
+		Action:  "accept",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = ch.AddRule(&Rule{
+		L3Proto: RuleL3Ip,
+		L3SrcIP: "172.21.194.11",
+		Action:  "accept",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = ch.AddRule(&Rule{
+		L3Proto: RuleL3Ip,
+		L3SrcIP: "172.21.194.11",
+		Action:  "drop",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = conn.Commit()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRule_Add(t *testing.T) {
+	conn, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tbl, err := conn.GetTableByName("mytable")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ch, err := tbl.GetChainByName("mychain")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = ch.AddRule(&Rule{
+		L3Proto: RuleL3Ip,
+		L3SrcIP: "2.2.2.45",
+		Action:  "drop",
+	})
+	err = conn.Commit()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRule_AddMany(t *testing.T) {
+	conn, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tbl, err := conn.GetTableByName("mytable")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ch, err := tbl.GetChainByName("mychain")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 100; i++ {
+		err = ch.AddRule(&Rule{
+			L3Proto: RuleL3Ip,
+			L3SrcIP: fmt.Sprintf("1.1.1.%d", i),
+			Action:  "drop",
+		})
+	}
+	err = conn.Commit()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRule_Replace(t *testing.T) {
+	conn, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tbl, err := conn.GetTableByName("mytable")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ch, err := tbl.GetChainByName("mychain")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = ch.ReplaceRule(&Rule{
+		Handle:  6,
+		L3Proto: RuleL3Ip,
+		L3SrcIP: "9.9.9.9",
+		Action:  "drop",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = conn.Commit()
+	if err != nil {
+		t.Fatal(err)
+	}
 }

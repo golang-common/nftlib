@@ -16,18 +16,6 @@ func TestFlushRuleSet(t *testing.T) {
 	}
 }
 
-func TestAddTable(t *testing.T) {
-	conn, err := New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = conn.ADDTable("mytable", TableFamilyInet)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(`create table "mytable" success`)
-}
-
 func TestAddSetIpv4(t *testing.T) {
 	conn, err := New()
 	if err != nil {

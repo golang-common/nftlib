@@ -55,10 +55,6 @@ func (d *Table) AddSet(name, dtype string, drange bool, elems ...string) (*Set, 
 	if err != nil {
 		return nil, err
 	}
-	err = d.conn.Commit()
-	if err != nil {
-		return nil, err
-	}
 	return set, nil
 }
 
@@ -121,7 +117,6 @@ func (d *Table) ClearSet() error {
 			return err
 		}
 		d.conn.DelSet(nset)
-		_ = d.conn.Commit()
 	}
 	return nil
 }
@@ -157,20 +152,12 @@ func (d *Table) ListChain() ([]*Chain, error) {
 	return chs, nil
 }
 
-func (d *Table) AddBaseChain(chain *Chain) error {
-	n, err := d.GetChainByName(chain.Name)
-	if err == nil && n != nil {
-		return errors.New("named chain already exist")
-	}
+func (d *Table) AddBaseChain(chain *Chain) *Chain {
 	chain.conn = d.conn
 	chain.Table = d
 	nch := chain.toNch()
 	d.conn.AddChain(nch)
-	err = d.conn.Commit()
-	if err != nil {
-		return err
-	}
-	return nil
+	return chain
 }
 
 func (d *Table) AddRegularChain(name string) (*Chain, error) {
@@ -185,10 +172,6 @@ func (d *Table) AddRegularChain(name string) (*Chain, error) {
 	}
 	nch := ch.toNch()
 	d.conn.AddChain(nch)
-	err = d.conn.Commit()
-	if err != nil {
-		return nil, err
-	}
 	return ch, nil
 }
 
