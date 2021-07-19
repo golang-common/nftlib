@@ -21,7 +21,7 @@ const (
 )
 
 type Chain struct {
-	conn     *Conn       `json:"-"`
+	Conn     *Conn       `json:"-"`
 	Table    *Table      `json:"table,omitempty"`
 	Name     string      `json:"name,omitempty"`
 	Priority int32       `json:"priority"`
@@ -37,43 +37,43 @@ type (
 )
 
 func (d *Chain) NewRule() *Rule {
-	return &Rule{Chain: d, conn: d.conn}
+	return &Rule{Chain: d, conn: d.Conn}
 }
 
 func (d *Chain) ClearRule() {
-	d.conn.FlushChain(d.toNch())
+	d.Conn.FlushChain(d.toNch())
 }
 
 func (d *Chain) AddRule(rule *Rule, handle ...uint64) error {
-	rule.conn = d.conn
+	rule.conn = d.Conn
 	rule.Chain = d
 	nrule, err := rule.toNRule(handle...)
 	if err != nil {
 		return err
 	}
-	d.conn.AddRule(nrule)
+	d.Conn.AddRule(nrule)
 	return nil
 }
 
 func (d *Chain) InsertRule(rule *Rule, handle ...uint64) error {
-	rule.conn = d.conn
+	rule.conn = d.Conn
 	rule.Chain = d
 	nrule, err := rule.toNRule(handle...)
 	if err != nil {
 		return err
 	}
-	d.conn.InsertRule(nrule)
+	d.Conn.InsertRule(nrule)
 	return nil
 }
 
 func (d *Chain) DelRule(rule *Rule) error {
-	rule.conn = d.conn
+	rule.conn = d.Conn
 	rule.Chain = d
 	nrule, err := rule.toNRule()
 	if err != nil {
 		return err
 	}
-	err = d.conn.DelRule(nrule)
+	err = d.Conn.DelRule(nrule)
 	if err != nil {
 		return err
 	}
@@ -81,24 +81,24 @@ func (d *Chain) DelRule(rule *Rule) error {
 }
 
 func (d *Chain) ReplaceRule(rule *Rule) error {
-	rule.conn = d.conn
+	rule.conn = d.Conn
 	rule.Chain = d
 	nrule, err := rule.toNRule()
 	if err != nil {
 		return err
 	}
-	d.conn.ReplaceRule(nrule)
+	d.Conn.ReplaceRule(nrule)
 	return nil
 }
 
 func (d *Chain) ListRule() ([]*Rule, error) {
 	var r []*Rule
-	nrlist, err := d.conn.GetRule(d.Table.toNTable(), d.toNch())
+	nrlist, err := d.Conn.GetRule(d.Table.toNTable(), d.toNch())
 	if err != nil {
 		return nil, err
 	}
 	for _, nr := range nrlist {
-		rule := &Rule{Chain: d, conn: d.conn}
+		rule := &Rule{Chain: d, conn: d.Conn}
 		err = rule.toRule(*nr)
 		if err != nil {
 			return nil, err
@@ -109,7 +109,7 @@ func (d *Chain) ListRule() ([]*Rule, error) {
 }
 
 func (d *Chain) Commit() error {
-	return d.conn.Commit()
+	return d.Conn.Commit()
 }
 
 func (d *Chain) toCh(nch nftables.Chain) {

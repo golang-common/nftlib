@@ -70,7 +70,7 @@ var (
 )
 
 type Rule struct {
-	conn   *Conn  `json:"-"`
+	conn   *Conn
 	Chain  *Chain `json:"-"`
 	Handle uint64 `json:"handle,omitempty"`
 	// L3Proto ipv4 or ipv6

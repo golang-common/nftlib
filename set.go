@@ -22,7 +22,7 @@ var (
 )
 
 type Set struct {
-	conn      *Conn    `json:"-"`
+	conn      *Conn
 	Table     *Table   `json:"table"`
 	Name      string   `json:"name,omitempty"`
 	DType     string   `json:"dtype,omitempty"`

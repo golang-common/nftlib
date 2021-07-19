@@ -18,7 +18,7 @@ const (
 type tableFamily string
 
 type Table struct {
-	conn   *Conn       `json:"-"`
+	conn   *Conn
 	Name   string      `json:"name"`
 	Family tableFamily `json:"family"`
 }
@@ -128,7 +128,7 @@ func (d *Table) GetChainByName(name string) (*Chain, error) {
 	}
 	for _, nc := range nch {
 		if nc.Name == name && nc.Table.Name == d.Name {
-			ch := &Chain{conn: d.conn, Table: d}
+			ch := &Chain{Conn: d.conn, Table: d}
 			ch.toCh(*nc)
 			return ch, nil
 		}
@@ -144,7 +144,7 @@ func (d *Table) ListChain() ([]*Chain, error) {
 	}
 	for _, nch := range nchs {
 		if nch.Table.Name == d.Name {
-			ch := &Chain{Table: d, conn: d.conn}
+			ch := &Chain{Table: d, Conn: d.conn}
 			ch.toCh(*nch)
 			chs = append(chs, ch)
 		}
@@ -153,7 +153,7 @@ func (d *Table) ListChain() ([]*Chain, error) {
 }
 
 func (d *Table) AddBaseChain(chain *Chain) *Chain {
-	chain.conn = d.conn
+	chain.Conn = d.conn
 	chain.Table = d
 	nch := chain.toNch()
 	d.conn.AddChain(nch)
@@ -162,7 +162,7 @@ func (d *Table) AddBaseChain(chain *Chain) *Chain {
 
 func (d *Table) AddRegularChain(name string) (*Chain, error) {
 	ch := &Chain{
-		conn:  d.conn,
+		Conn:  d.conn,
 		Table: d,
 		Name:  name,
 	}

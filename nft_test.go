@@ -29,20 +29,17 @@ func (d *NftTest) Test01_AddTable() {
 	if err != nil {
 		panic(err)
 	}
-	table, err := conn.ADDTable("mytable", TableFamilyInet)
-	if err != nil {
-		panic(err)
-	}
+	table := conn.ADDTable(&Table{Name: "mytable", Family: TableFamilyInet})
 	d.table = table
 	fmt.Println("创建mytable表成功")
 }
 
 func (d *NftTest) Test02_AddChain() {
 	ch := &Chain{
-		Name:     "mychain",
-		Hook:     ChainHookInput,
-		Type:     ChainTypeFilter,
-		Policy:   ChainPolicyAccept,
+		Name:   "mychain",
+		Hook:   ChainHookInput,
+		Type:   ChainTypeFilter,
+		Policy: ChainPolicyAccept,
 	}
 	err := d.table.AddBaseChain(ch)
 	if err != nil {
